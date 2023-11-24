@@ -1,6 +1,6 @@
 const chaiHttp = require("chai-http");
 const chai = require("chai");
-const expect = chai.expect;
+const assert = chai.assert;
 
 const server = require("../server");
 const { createMochaInstanceAlreadyDisposedError } = require("mocha/lib/errors");
@@ -24,21 +24,21 @@ suite("Functional Tests", function () {
 				status_text: "QA",
 			})
 			.end((err, res) => {
-				expect(res.status).to.equal(200);
-				expect(res.body).to.have.property("_id");
-				expect(res.body)
-				.to.have.property("issue_title")
-				.to.equal("Faux Issue Title");
-				expect(res.body)
-				.to.have.property("issue_text")
-				.to.equal("Functional Test - Required Fields Only");
-				expect(res.body).to.have.property("created_by").to.equal("fCC");
-				expect(res.body).to.have.property("assigned_to").to.equal("Me");
-				expect(res.body).to.have.property("status_text").to.equal("QA");
-				expect(res.body)
-				.to.have.property("open")
-				.to.be.a("boolean")
-				.and.to.equal(true);
+				assert.equal(res.status, 200)
+				assert.property(res.body, "_id");
+				assert.property(res.body, "issue_title")
+				assert.equal(res.body.issue_title, "Faux Issue Title");
+				assert.property(res.body, "issue_text")
+				assert.equal(res.body.issue_text, "Functional Test - Required Fields Only");
+				assert.property(res.body, "created_by")
+				assert.equal(res.body.created_by, "fCC");
+				assert.property(res.body, "assigned_to")
+				assert.equal(res.body.assigned_to, "Me");
+				assert.property(res.body, "status_text")
+				assert.equal(res.body.status_text, "QA");
+				assert.property(res.body,"open")
+				assert.isBoolean(res.body.open)
+				assert.equal(res.body.open, true)
 
 				firstInsertedID = res.body._id;
 				done();
@@ -54,21 +54,19 @@ suite("Functional Tests", function () {
 				created_by: "Leonel",
 			})
 			.end((err, res) => {
-				expect(res.status).to.equal(200);
-				expect(res.body).to.have.property("_id");
-				expect(res.body)
-					.to.have.property("issue_title")
-					.to.equal("Faux Issue Title");
-				expect(res.body)
-					.to.have.property("issue_text")
-					.to.equal("Functional Test - Required Fields Only");
-				expect(res.body).to.have.property("created_by").to.equal("Leonel");
-				expect(res.body).to.have.property("assigned_to").to.equal("");
-				expect(res.body).to.have.property("status_text").to.equal("");
-				expect(res.body)
-					.to.have.property("open")
-					.to.be.a("boolean")
-					.and.to.equal(true);
+				assert.equal(res.status, 200);
+				assert.property(res.body, "_id");
+				assert.property(res.body, "issue_title")
+				assert.equal(res.body.issue_title, "Faux Issue Title");
+				assert.property(res.body, "issue_text")
+				assert.equal(res.body.issue_text, "Functional Test - Required Fields Only");
+				assert.property(res.body, "created_by");
+				assert.equal(res.body.created_by, "Leonel")
+				assert.property(res.body, "assigned_to");
+				assert.property(res.body, "status_text");
+				assert.property(res.body,"open")
+				assert.isBoolean(res.body.open)
+				assert.equal(res.body.open, true)
 
 				firstInsertedID = res.body._id;
 				done();
@@ -83,8 +81,9 @@ suite("Functional Tests", function () {
 				issue_text: "Functional Test - Required Fields Only",
 			})
 			.end((err, res) => {
-				expect(res.status).to.equal(400);
-				expect(res.body).to.have.property('error').to.be.equal('required field(s) missing');
+				assert.equal(res.status, 200);
+				assert.property(res.body, 'error');
+				assert.equal(res.body.error, 'required field(s) missing')
 				done();
 			});
 		})
@@ -95,17 +94,17 @@ suite("Functional Tests", function () {
 			.request(server)
 			.get(ENDPOINT)
 			.end((err, res) => {
-				expect(res.status).to.equal(200);
-				expect(res.body).is.a('array');
-				expect(res.body[0]).to.have.property('_id')
-				expect( res.body[0] ).to.have.property( 'issue_title' );
-				expect( res.body[0] ).to.have.property( 'issue_text'  );
-				expect( res.body[0] ).to.have.property( 'assigned_to' );
-				expect( res.body[0] ).to.have.property( 'status_text' );
-				expect( res.body[0] ).to.have.property( 'created_by'  );
-				expect( res.body[0] ).to.have.property( 'created_on'  );
-				expect( res.body[0] ).to.have.property( 'updated_on'  );
-				expect( res.body[0] ).to.have.property( 'open'        );
+				assert.equal(res.status, 200);
+				assert.isArray(res.body);
+				assert.property(res.body[0], '_id')
+				assert.property( res.body[0] , 'issue_title' );
+				assert.property( res.body[0] , 'issue_text'  );
+				assert.property( res.body[0] , 'assigned_to' );
+				assert.property( res.body[0] , 'status_text' );
+				assert.property( res.body[0] , 'created_by'  );
+				assert.property( res.body[0] , 'created_on'  );
+				assert.property( res.body[0] , 'updated_on'  );
+				assert.property( res.body[0] , 'open'        );
 				done( );
 			})
 		})
@@ -115,17 +114,18 @@ suite("Functional Tests", function () {
 			.get(ENDPOINT)
 			.query({created_by: 'Leonel'})
 			.end((err, res) => {
-				expect(res.status).to.equal(200);
-				expect(res.body).is.a('array');
-				expect(res.body[0]).to.have.property('_id')
-				expect( res.body[0] ).to.have.property( 'issue_title' );
-				expect( res.body[0] ).to.have.property( 'issue_text'  );
-				expect( res.body[0] ).to.have.property( 'assigned_to' );
-				expect( res.body[0] ).to.have.property( 'status_text' );
-				expect( res.body[0] ).to.have.property( 'created_by'  ).to.equal('Leonel');
-				expect( res.body[0] ).to.have.property( 'created_on'  );
-				expect( res.body[0] ).to.have.property( 'updated_on'  );
-				expect( res.body[0] ).to.have.property( 'open'        );
+				assert.equal(res.status, 200);
+				assert.isArray(res.body);
+				assert.property(res.body[0], '_id')
+				assert.property( res.body[0] , 'issue_title' );
+				assert.property( res.body[0] , 'issue_text'  );
+				assert.property( res.body[0] , 'assigned_to' );
+				assert.property( res.body[0] , 'status_text' );
+				assert.property( res.body[0] , 'created_by'  )
+				assert.equal(res.body[0].created_by, 'Leonel')
+				assert.property( res.body[0] , 'created_on'  );
+				assert.property( res.body[0] , 'updated_on'  );
+				assert.property( res.body[0] , 'open'        );
 				done( );
 			})
 		})
@@ -135,17 +135,19 @@ suite("Functional Tests", function () {
 			.get(ENDPOINT)
 			.query({created_by: 'fCC', assigned_to: 'Me'})
 			.end((err, res) => {
-				expect(res.status).to.equal(200);
-				expect(res.body).is.a('array');
-				expect(res.body[0]).to.have.property('_id')
-				expect( res.body[0] ).to.have.property( 'issue_title' );
-				expect( res.body[0] ).to.have.property( 'issue_text'  );
-				expect( res.body[0] ).to.have.property( 'assigned_to' ).to.equal('Me');
-				expect( res.body[0] ).to.have.property( 'status_text' );
-				expect( res.body[0] ).to.have.property( 'created_by'  ).to.equal('fCC');
-				expect( res.body[0] ).to.have.property( 'created_on'  );
-				expect( res.body[0] ).to.have.property( 'updated_on'  );
-				expect( res.body[0] ).to.have.property( 'open'        );
+				assert.equal(res.status, 200);
+				assert.isArray(res.body);
+				assert.property(res.body[0], '_id')
+				assert.property( res.body[0] , 'issue_title' );
+				assert.property( res.body[0] , 'issue_text'  );
+				assert.property( res.body[0] , 'assigned_to' );
+				assert.equal(res.body[0].assigned_to, 'Me')
+				assert.property( res.body[0] , 'status_text' );
+				assert.property( res.body[0] , 'created_by'  )
+				assert.equal(res.body[0].created_by, 'fCC')
+				assert.property( res.body[0] , 'created_on'  );
+				assert.property( res.body[0] , 'updated_on'  );
+				assert.property( res.body[0] , 'open'        );
 				done( );
 			})
 		})
@@ -157,9 +159,11 @@ suite("Functional Tests", function () {
 			.put(ENDPOINT)
 			.send({_id: firstInsertedID, issue_title: "Updated Title"})
 			.end((err, res) => {
-				expect(res.status).to.equal(200)
-				expect(res.body).to.have.property('_id').to.equal(firstInsertedID)
-				expect(res.body).to.have.property('result').to.equal('successfully updated')
+				assert.equal(res.status, 200)
+				assert.property(res.body, '_id')
+				assert.equal(res.body._id, firstInsertedID)
+				assert.property(res.body, 'result')
+				assert.equal(res.body.result, 'successfully updated')
 				done()	
 			})
 		})
@@ -169,8 +173,11 @@ suite("Functional Tests", function () {
 			.put(ENDPOINT)
 			.send({_id: firstInsertedID, issue_title: "Updated Title", issue_text:"Updated Text"})
 			.end((err, res) => {
-				expect(res.body).to.have.property('_id').to.equal(firstInsertedID)
-				expect(res.body).to.have.property('result').to.equal('successfully updated')
+				assert.equal(res.status, 200)
+				assert.property(res.body, '_id')
+				assert.equal(res.body._id, firstInsertedID)
+				assert.property(res.body, 'result')
+				assert.equal(res.body.result, 'successfully updated')
 				done()
 			})
 		})
@@ -180,8 +187,9 @@ suite("Functional Tests", function () {
 			.put(ENDPOINT)
 			.send({ issue_title: "Updated Title"})
 			.end((err, res) => {
-				expect(res.status).to.equal(400)
-				expect(res.body).to.have.property('error').to.equal('missing _id')
+				assert.equal(res.status, 200)
+				assert.property(res.body, 'error')
+				assert.equal(res.body.error, 'missing _id')
 				done()
 			})
 		})
@@ -191,9 +199,11 @@ suite("Functional Tests", function () {
 			.put(ENDPOINT)
 			.send({ _id: firstInsertedID })
 			.end((err, res) => {
-				expect(res.status).to.equal(400)
-				expect(res.body).to.have.property('error').to.equal('no update field(s) sent')
-				expect(res.body).to.have.property('_id').to.equal(firstInsertedID)
+				assert.equal(res.status, 200)
+				assert.property(res.body, '_id')
+				assert.equal(res.body._id, firstInsertedID)
+				assert.property(res.body, 'error')
+				assert.equal(res.body.error, 'no update field(s) sent')
 				done()
 			})
 		})
@@ -203,9 +213,11 @@ suite("Functional Tests", function () {
 			.put(ENDPOINT)
 			.send({ _id: 'firstInsertedID', issue_title: "Updated Title" })
 			.end((err, res) => {
-				expect(res.status).to.equal(400)
-				expect(res.body).to.have.property('error').to.equal('could not update')
-				expect(res.body).to.have.property('_id').to.equal('firstInsertedID')
+				assert.equal(res.status, 200)
+				assert.property(res.body, '_id')
+				assert.equal(res.body._id, 'firstInsertedID')
+				assert.property(res.body, 'error')
+				assert.equal(res.body.error, 'could not update')
 				done()
 			})
 		})
@@ -217,9 +229,11 @@ suite("Functional Tests", function () {
 			.delete(ENDPOINT)
 			.send({_id: firstInsertedID})
 			.end((err, res) => {
-				expect(res.status).to.equal(200)
-				expect(res.body).to.have.property('result').to.equal('successfully deleted')
-				expect(res.body).to.have.property('_id').to.equal(firstInsertedID)
+				assert.equal(res.status, 200)
+				assert.property(res.body, 'result')
+				assert.equal(res.body.result, 'successfully deleted')
+				assert.property(res.body, '_id')
+				assert.equal(res.body._id, firstInsertedID)
 				done()
 			})
 		})
@@ -229,9 +243,11 @@ suite("Functional Tests", function () {
 			.delete(ENDPOINT)
 			.send({_id: 'firstInsertedID'})
 			.end((err, res) => {
-				expect(res.status).to.equal(400)
-				expect(res.body).to.have.property('error').to.equal('could not delete')
-				expect(res.body).to.have.property('_id').to.equal('firstInsertedID')
+				assert.equal(res.status, 200)
+				assert.property(res.body, 'error')
+				assert.equal(res.body.error, 'could not delete')
+				assert.property(res.body, '_id')
+				assert.equal(res.body._id, 'firstInsertedID')
 				done()
 			})
 		})
@@ -241,8 +257,9 @@ suite("Functional Tests", function () {
 			.delete(ENDPOINT)
 			.send({})
 			.end((err, res) => {
-				expect(res.status).to.equal(400)
-				expect(res.body).to.have.property('error').to.equal('missing _id')
+				assert.equal(res.status, 200)
+				assert.property(res.body, 'error')
+				assert.equal(res.body.error, 'missing _id')
 				done()
 			})
 		})

@@ -42,7 +42,7 @@ module.exports = function (app) {
         !req.body.issue_title ||
         !req.body.issue_text
       ) {
-        return res.status(400).json({ error: "required field(s) missing" });
+        return res.json({ error: "required field(s) missing" });
       }
 
       let date = new Date();
@@ -67,11 +67,11 @@ module.exports = function (app) {
       let project = req.params.project;
       let {_id, ...fields} = req.body
 
-      if(!_id) return res.status(400).json({ error: 'missing _id' })
-      if(Object.keys(fields).length === 0) return res.status(400).json({ error: 'no update field(s) sent', _id })
+      if(!_id) return res.json({ error: 'missing _id' })
+      if(Object.keys(fields).length === 0) return res.json({ error: 'no update field(s) sent', _id })
       
       let updatedIssue = projectDB[project].filter(issue => issue._id == _id )
-      if(updatedIssue.length === 0) return res.status(400).json({ error: 'could not update', '_id': _id })
+      if(updatedIssue.length === 0) return res.json({ error: 'could not update', '_id': _id })
       
       Object.keys(fields).forEach(key => {
         updatedIssue[0][key] = fields[key]
@@ -84,12 +84,12 @@ module.exports = function (app) {
     .delete(function (req, res) {
       let project = req.params.project;
       let {_id} = req.body
-      if(!_id) return res.status(400).json({ error: 'missing _id' })
+      if(!_id) return res.json({ error: 'missing _id' })
 
       let delIssue = projectDB[project].filter(issue => issue._id == _id )
       const index = projectDB[project].indexOf(delIssue[0]);
-      if(delIssue.length === 0) return res.status(400).json({ error: 'could not delete', '_id': _id })
+      if(delIssue.length === 0) return res.json({ error: 'could not delete', _id })
       projectDB[project].splice(index, 1)
-      return res.json({ result: 'successfully deleted', '_id': _id })
+      return res.json({ result: 'successfully deleted', _id })
     });
 };
